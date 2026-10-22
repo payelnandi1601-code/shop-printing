@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Print Shop</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  margin: 0;
+  padding: 20px;
+}
+.container {
+  max-width: 480px;
+  margin: auto;
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 3px 14px #0001;
+}
+h1 { text-align: center; color: #14532d; }
+label { display: block; margin-top: 16px; font-weight: bold; }
+input, select, button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin-top: 7px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 16px;
+}
+button {
+  background: #15803d;
+  color: white;
+  border: 0;
+  margin-top: 22px;
+  font-weight: bold;
+}
+.note { color: #64748b; font-size: 13px; }
+.price { background: #dcfce7; padding: 14px; margin-top: 18px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🖨️ Online Print Shop</h1>
+  <p style="text-align:center">আপনার ফাইল বেছে নিয়ে প্রিন্টের হিসাব দেখুন</p>
+
+  <label for="file">১. ফাইল নির্বাচন করুন</label>
+  <input id="file" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+
+  <label for="pages">২. কত পৃষ্ঠা প্রিন্ট করবেন?</label>
+  <input id="pages" type="number" min="1" value="1">
+
+  <label for="copies">৩. কত কপি লাগবে?</label>
+  <input id="copies" type="number" min="1" value="1">
+
+  <label for="side">৪. প্রিন্টের ধরন</label>
+  <select id="side">
+    <option value="1">এক পিঠে প্রিন্ট</option>
+    <option value="2">দুই পিঠে প্রিন্ট (প্রতি পৃষ্ঠার দাম একই)</option>
+  </select>
+
+  <label for="quality">৫. কাগজের ধরন</label>
+  <select id="quality">
+    <option value="2">সাদা-কালো — ₹২ প্রতি পৃষ্ঠা</option>
+    <option value="5">রঙিন — ₹৫ প্রতি পৃষ্ঠা</option>
+  </select>
+
+  <div class="price">
+    <strong>আনুমানিক প্রিন্টের দাম:</strong>
+    <h2 id="total">₹২</h2>
+    <p id="details" class="note">১ পৃষ্ঠা × ১ কপি</p>
+  </div>
+
+  <button onclick="showMessage()">পরবর্তী ধাপ</button>
+  <p class="note">এটি প্রাথমিক সংস্করণ। এখনো ফাইল আপলোড, পেমেন্ট বা প্রিন্টের অর্ডার দোকানে পাঠানো হয় না।</p>
+</div>
+
+<script>
+const pages = document.getElementById("pages");
+const copies = document.getElementById("copies");
+const quality = document.getElementById("quality");
+const side = document.getElementById("side");
+
+function updatePrice() {
+  const p = Math.max(1, Number(pages.value) || 1);
+  const c = Math.max(1, Number(copies.value) || 1);
+  const rate = Number(quality.value);
+  const total = p * c * rate;
+
+  document.getElementById("total").textContent =
+    "₹" + total;
+
+  document.getElementById("details").textContent =
+    p + " পৃষ্ঠা × " + c + " কপি × ₹" + rate;
+}
+
+[pages, copies, quality, side].forEach(element => {
+  element.addEventListener("input", updatePrice);
+  element.addEventListener("change", updatePrice);
+});
+
+function showMessage() {
+  if (!document.getElementById("file").files.length) {
+    alert("আগে আপনার ফাইল নির্বাচন করুন।");
+    return;
+  }
+  alert("এটি পরীক্ষামূলক ওয়েবসাইট। অর্ডার পাঠানো ও পেমেন্টের ব্যবস্থা এখনো তৈরি হয়নি।");
+}
+
+updatePrice();
+</script>
+</body>
+</html>
