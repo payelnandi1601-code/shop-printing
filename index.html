@@ -2,115 +2,290 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Online Print Shop</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f1f5f9;
-  margin: 0;
-  padding: 20px;
-}
-.container {
-  max-width: 480px;
-  margin: auto;
-  background: white;
-  padding: 22px;
-  border-radius: 14px;
-  box-shadow: 0 3px 14px #0001;
-}
-h1 { text-align: center; color: #14532d; }
-label { display: block; margin-top: 16px; font-weight: bold; }
-input, select, button {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 12px;
-  margin-top: 7px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 16px;
-}
-button {
-  background: #15803d;
-  color: white;
-  border: 0;
-  margin-top: 22px;
-  font-weight: bold;
-}
-.note { color: #64748b; font-size: 13px; }
-.price { background: #dcfce7; padding: 14px; margin-top: 18px; border-radius: 8px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Printing</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f5f7;
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+    }
+
+    .panel {
+      background: white;
+      padding: 20px;
+      margin-bottom: 18px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #00000012;
+    }
+
+    h1, h2 { color: #173b70; }
+
+    input, select, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 7px 0;
+      font-size: 16px;
+    }
+
+    button {
+      background: #1759a8;
+      color: white;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .price {
+      font-size: 23px;
+      font-weight: bold;
+      color: #087443;
+    }
+
+    .hidden { display: none; }
+    .note { color: #555; font-size: 14px; }
+    #message { white-space: pre-wrap; }
+  </style>
 </head>
+
 <body>
 <div class="container">
-  <h1>🖨️ Online Print Shop</h1>
-  <p style="text-align:center">আপনার ফাইল বেছে নিয়ে প্রিন্টের হিসাব দেখুন</p>
 
-  <label for="file">১. ফাইল নির্বাচন করুন</label>
-  <input id="file" type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+  <h1>Shop Printing</h1>
+  <p>আপনার ফাইলের প্রিন্টের খরচ হিসাব করুন।</p>
 
-  <label for="pages">২. কত পৃষ্ঠা প্রিন্ট করবেন?</label>
-  <input id="pages" type="number" min="1" value="1">
+  <!-- গ্রাহকের জন্য প্রিন্টের হিসাব -->
+  <section class="panel">
+    <h2>প্রিন্টের হিসাব</h2>
 
-  <label for="copies">৩. কত কপি লাগবে?</label>
-  <input id="copies" type="number" min="1" value="1">
+    <label>ফাইল নির্বাচন করুন (PDF, ছবি, Word)</label>
+    <input type="file" id="file"
+      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
 
-  <label for="side">৪. প্রিন্টের ধরন</label>
-  <select id="side">
-    <option value="1">এক পিঠে প্রিন্ট</option>
-    <option value="2">দুই পিঠে প্রিন্ট (প্রতি পৃষ্ঠার দাম একই)</option>
-  </select>
+    <label>পৃষ্ঠা সংখ্যা</label>
+    <input type="number" id="pages" min="1" value="1">
 
-  <label for="quality">৫. কাগজের ধরন</label>
-  <select id="quality">
-    <option value="2">সাদা-কালো — ₹২ প্রতি পৃষ্ঠা</option>
-    <option value="5">রঙিন — ₹৫ প্রতি পৃষ্ঠা</option>
-  </select>
+    <label>কপি সংখ্যা</label>
+    <input type="number" id="copies" min="1" value="1">
 
-  <div class="price">
-    <strong>আনুমানিক প্রিন্টের দাম:</strong>
-    <h2 id="total">₹২</h2>
-    <p id="details" class="note">১ পৃষ্ঠা × ১ কপি</p>
-  </div>
+    <label>প্রিন্টের ধরন</label>
+    <select id="printType">
+      <option value="bw">সাদা-কালো — ₹5 প্রতি পৃষ্ঠা</option>
+      <option value="color">কালার — ₹10 প্রতি পৃষ্ঠা</option>
+    </select>
 
-  <button onclick="showMessage()">পরবর্তী ধাপ</button>
-  <p class="note">এটি প্রাথমিক সংস্করণ। এখনো ফাইল আপলোড, পেমেন্ট বা প্রিন্টের অর্ডার দোকানে পাঠানো হয় না।</p>
+    <p>মোট আনুমানিক মূল্য:</p>
+    <p class="price" id="total">₹5</p>
+
+    <p class="note">
+      এটি শুধু মূল্য হিসাবের ডেমো। ফাইল এখনও আপলোড হয় না
+      এবং এখানে অর্ডার বা পেমেন্ট সম্পন্ন হয় না।
+    </p>
+  </section>
+
+  <!-- Admin Login -->
+  <section class="panel">
+    <h2>Admin Login</h2>
+
+    <div id="loginArea">
+      <input type="email" id="email" placeholder="Admin Email">
+      <input type="password" id="password" placeholder="Password">
+      <button id="loginBtn">Login</button>
+    </div>
+
+    <div id="adminArea" class="hidden">
+      <h2>দাম পরিবর্তন করুন</h2>
+
+      <label>সাদা-কালো প্রতি পৃষ্ঠা (₹)</label>
+      <input type="number" id="bwPrice" min="0.01" step="0.01">
+
+      <label>কালার প্রতি পৃষ্ঠা (₹)</label>
+      <input type="number" id="colorPrice" min="0.01" step="0.01">
+
+      <button id="saveBtn">দাম সংরক্ষণ করুন</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
+
+    <p id="message" role="status"></p>
+  </section>
 </div>
 
-<script>
-const pages = document.getElementById("pages");
-const copies = document.getElementById("copies");
-const quality = document.getElementById("quality");
-const side = document.getElementById("side");
+<script type="module">
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
-function updatePrice() {
-  const p = Math.max(1, Number(pages.value) || 1);
-  const c = Math.max(1, Number(copies.value) || 1);
-  const rate = Number(quality.value);
-  const total = p * c * rate;
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-  document.getElementById("total").textContent =
-    "₹" + total;
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc
+  } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-  document.getElementById("details").textContent =
-    p + " পৃষ্ঠা × " + c + " কপি × ₹" + rate;
-}
+  // 🔴 পরিবর্তন ১: Firebase Config-এর আসল মান বসান
+  const firebaseConfig = {
+    apiKey: "AIzaSyDMDoSbTFQqm4vbJXYdWX_kRQhoBDvQQQQ",
+    authDomain: "shop-printing-455f2.firebaseapp.com",
+    projectId: "shop-printing-455f2",
+    storageBucket: "shop-printing-455f2.firebasestorage.app",
+    messagingSenderId: "309472490120",
+    appId: "1:309472490120:web:0fd0c8bd2b7ad30aab253d"
+  };
 
-[pages, copies, quality, side].forEach(element => {
-  element.addEventListener("input", updatePrice);
-  element.addEventListener("change", updatePrice);
-});
+  // 🔴 পরিবর্তন ২: আপনার Admin UID বসান
+  const ADMIN_UID = "Nwf8h9s11XSs8cs63sQLu3Of3mz1";
 
-function showMessage() {
-  if (!document.getElementById("file").files.length) {
-    alert("আগে আপনার ফাইল নির্বাচন করুন।");
-    return;
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let bwRate = 5;
+  let colorRate = 10;
+
+  const message = document.getElementById("message");
+
+  function showMessage(text) {
+    message.textContent = text;
   }
-  alert("এটি পরীক্ষামূলক ওয়েবসাইট। অর্ডার পাঠানো ও পেমেন্টের ব্যবস্থা এখনো তৈরি হয়নি।");
-}
 
-updatePrice();
+  function calculate() {
+    const pages = Number(document.getElementById("pages").value);
+    const copies = Number(document.getElementById("copies").value);
+    const type = document.getElementById("printType").value;
+
+    const rate = type === "color" ? colorRate : bwRate;
+
+    if (pages < 1 || copies < 1 ||
+        !Number.isInteger(pages) || !Number.isInteger(copies)) {
+      document.getElementById("total").textContent = "সঠিক সংখ্যা দিন";
+      return;
+    }
+
+    document.getElementById("total").textContent =
+      "₹" + (pages * copies * rate).toFixed(2);
+  }
+
+  document.getElementById("pages").addEventListener("input", calculate);
+  document.getElementById("copies").addEventListener("input", calculate);
+  document.getElementById("printType").addEventListener("change", calculate);
+
+  async function loadPrices() {
+    const ref = doc(db, "settings", "prices");
+    const snap = await getDoc(ref);
+
+    if (snap.exists()) {
+      const data = snap.data();
+
+      if (Number.isFinite(data.bw) && data.bw > 0) bwRate = data.bw;
+      if (Number.isFinite(data.color) && data.color > 0) colorRate = data.color;
+    }
+
+    document.querySelector('#printType option[value="bw"]').textContent =
+      `সাদা-কালো — ₹${bwRate} প্রতি পৃষ্ঠা`;
+
+    document.querySelector('#printType option[value="color"]').textContent =
+      `কালার — ₹${colorRate} প্রতি পৃষ্ঠা`;
+
+    calculate();
+  }
+
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    try {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      showMessage("Login হয়নি। Email ও Password পরীক্ষা করুন।");
+    }
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    const loginArea = document.getElementById("loginArea");
+    const adminArea = document.getElementById("adminArea");
+
+    if (user && user.uid === ADMIN_UID) {
+      loginArea.classList.add("hidden");
+      adminArea.classList.remove("hidden");
+
+      try {
+        const snap = await getDoc(doc(db, "settings", "prices"));
+
+        if (snap.exists()) {
+          const data = snap.data();
+          bwRate = data.bw ?? 5;
+          colorRate = data.color ?? 10;
+        }
+
+        document.getElementById("bwPrice").value = bwRate;
+        document.getElementById("colorPrice").value = colorRate;
+
+        await loadPrices();
+        showMessage("Admin Login সফল হয়েছে।");
+      } catch (error) {
+        showMessage("দাম পড়া যায়নি। Firestore Rules পরীক্ষা করুন।");
+      }
+    } else {
+      loginArea.classList.remove("hidden");
+      adminArea.classList.add("hidden");
+
+      if (user) {
+        await signOut(auth);
+        showMessage("এই অ্যাকাউন্ট Admin হিসেবে অনুমোদিত নয়।");
+      }
+    }
+  });
+
+  document.getElementById("saveBtn").addEventListener("click", async () => {
+    const user = auth.currentUser;
+
+    if (!user || user.uid !== ADMIN_UID) {
+      showMessage("অনুমতি নেই।");
+      return;
+    }
+
+    const bw = Number(document.getElementById("bwPrice").value);
+    const color = Number(document.getElementById("colorPrice").value);
+
+    if (!Number.isFinite(bw) || !Number.isFinite(color) ||
+        bw <= 0 || color <= 0) {
+      showMessage("দুটি দামই শূন্যের বেশি দিন।");
+      return;
+    }
+
+    try {
+      await setDoc(doc(db, "settings", "prices"), { bw, color });
+      bwRate = bw;
+      colorRate = color;
+      await loadPrices();
+      showMessage("দাম Firestore-এ সংরক্ষণ হয়েছে।");
+    } catch (error) {
+      showMessage("দাম সংরক্ষণ হয়নি। Firestore Rules পরীক্ষা করুন।");
+    }
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    showMessage("Logout হয়েছে।");
+  });
+
+  calculate();
 </script>
 </body>
 </html>
